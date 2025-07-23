@@ -16,11 +16,13 @@
 mod expr;
 mod token;
 mod ast;
+mod context;
 
 
 pub use token::{Lexer, Token, LexError};
-pub use expr::{Expr, Context, EvalError};
+pub use expr::{Expr, EvalError};
 pub use ast::{Parser, ExprNode, ParseError};
+pub use context::{Context, FunctionImpl};
 
 
 use std::str::FromStr;

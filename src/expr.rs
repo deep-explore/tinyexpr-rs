@@ -1,5 +1,5 @@
 use crate::ast::{ExprNode, Parser, ParseError};
-use std::collections::HashMap;
+use crate::context::Context;
 use std::str::FromStr;
 
 /// A parsed expression. Use `.eval(&Context)` to evaluate it.
@@ -26,36 +26,11 @@ impl FromStr for Expr {
     }
 }
 
-/// Context holds variable bindings used during evaluation.
-#[derive(Debug, Clone)]
-pub struct Context {
-    vars: HashMap<String, f64>,
-}
-
-impl Context {
-    /// Create a new, empty context.
-    pub fn new() -> Self {
-        Self {
-            vars: HashMap::new(),
-        }
-    }
-
-    /// Add a variable to the context.
-    pub fn with_var(mut self, name: &str, val: f64) -> Self {
-        self.vars.insert(name.to_string(), val);
-        self
-    }
-
-    /// Get a variable value by name.
-    pub fn get(&self, name: &str) -> Option<f64> {
-        self.vars.get(name).copied()
-    }
-}
-
 /// Errors that can occur during evaluation.
 #[derive(Debug, Clone, PartialEq)]
 pub enum EvalError {
     UnknownVariable(String),
+    UnknownFunction(String),
     DivisionByZero,
     InvalidOperation,
 }
@@ -65,9 +40,11 @@ impl ExprNode {
     pub fn eval(&self, ctx: &Context) -> Result<f64, EvalError> {
         match self {
             ExprNode::Number(n) => Ok(*n),
+
             ExprNode::Variable(name) => ctx
-                .get(name)
+                .get_var(name)
                 .ok_or_else(|| EvalError::UnknownVariable(name.clone())),
+
             ExprNode::BinaryOp { op, left, right } => {
                 let l = left.eval(ctx)?;
                 let r = right.eval(ctx)?;
@@ -86,19 +63,15 @@ impl ExprNode {
                     _ => Err(EvalError::InvalidOperation),
                 }
             }
+
             ExprNode::FunctionCall { name, args } => {
                 let arg_values: Result<Vec<f64>, EvalError> =
                     args.iter().map(|arg| arg.eval(ctx)).collect();
                 let arg_values = arg_values?;
 
-                match (name.as_str(), arg_values.as_slice()) {
-                    ("sin", [x]) => Ok(x.sin()),
-                    ("cos", [x]) => Ok(x.cos()),
-                    ("sqrt", [x]) => Ok(x.sqrt()),
-                    ("abs", [x]) => Ok(x.abs()),
-                    ("max", [x, y]) => Ok(x.max(*y)),
-                    ("min", [x, y]) => Ok(x.min(*y)),
-                    _ => Err(EvalError::InvalidOperation),
+                match ctx.get_func(name) {
+                    Some(func) => func(&arg_values).map_err(|_| EvalError::InvalidOperation),
+                    None => Err(EvalError::UnknownFunction(name.clone())),
                 }
             }
         }
