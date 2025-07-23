@@ -14,5 +14,22 @@
 //! ```
 
 mod expr;
+mod token;
+mod ast;
 
-pub use expr::{Context, EvalError, Expr};
+
+pub use token::{Lexer, Token, LexError};
+pub use expr::{Expr, Context, EvalError};
+pub use ast::{Parser, ExprNode, ParseError};
+
+
+use std::str::FromStr;
+
+impl std::str::FromStr for ExprNode {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parser = Parser::new(s)?;
+        parser.parse()
+    }
+}

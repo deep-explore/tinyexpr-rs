@@ -2,12 +2,18 @@
 
 > A tiny, composable math expression evaluator with AST support, inspired by the C library `tinyexpr`.
 
-## ✨ Features
+## ✨ Long term goals
 
 - Lightweight math expression parsing
 - Functional-style API: immutable `Context`
 - Variables, constants, and user-defined functions
 - AST-based, re-usable expression trees
+
+## ✨ Current Features
+
+- Safe, no `unsafe` code
+- Variables via `Context`
+- Math functions: `sin(x)`, `sqrt(x)`, `max(a, b)`, etc.
 
 ## 📦 Install
 
