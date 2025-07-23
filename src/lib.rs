@@ -7,10 +7,10 @@
 //! ```rust
 //! use tinyexpr_rs::*;
 //!
-//! let expr = "x * x + 1".parse::<Expr>().unwrap();
+//! let expr = "x + 2".parse::<Expr>().unwrap();
 //! let ctx = Context::new().with_var("x", 3.0);
 //! let result = expr.eval(&ctx).unwrap();
-//! assert_eq!(result, 10.0);
+//! assert_eq!(result, 5.0);
 //! ```
 
 mod expr;
