@@ -8,6 +8,7 @@
 - Functional-style API: immutable `Context`
 - Variables, constants, and user-defined functions
 - AST-based, re-usable expression trees
+- Wasm friendly?!? Maybe
 
 ## ✨ Current Features
 
