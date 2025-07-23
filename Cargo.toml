@@ -1,0 +1,12 @@
+[package]
+name = "tinyexpr_rs"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Tiny, composable expression evaluator with AST and functional-style context"
+repository = "https://github.com/deep-explore/tinyexpr-rs"
+homepage = ""
+documentation = ""
+
+[dependencies]
+thiserror = "1.0"
